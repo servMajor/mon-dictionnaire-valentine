@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Dictionnaire de Valentine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff5f7;
+            background-image: radial-gradient(#ffcad4 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+        }
+        .serif { font-family: 'Playfair Display', serif; }
+        .romantic-font { font-family: 'Dancing Script', cursive; }
+        
+        /* Page de garde */
+        #hero {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: radial-gradient(circle, #ffffff 0%, #fff1f2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            text-align: center;
+            padding: 20px;
+        }
+        #hero.hide {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        .alphabet-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #fee2e2;
+        }
+
+        .word-card {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: all 0.3s ease;
+            border-left: 4px solid #e11d48;
+            overflow: hidden;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .example-box {
+            background-color: #fff1f2;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: auto;
+            font-style: italic;
+            font-size: 0.8rem;
+            color: #9f1239;
+            line-height: 1.2;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff5f7; }
+        ::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 10px; }
+        
+        .btn-heart {
+            background-color: #e11d48;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 14px 0 rgba(225, 29, 72, 0.39);
+            transition: all 0.2s;
+        }
+        .btn-heart:hover {
+            transform: scale(1.05);
+            background-color: #be123c;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Écran de bienvenue (Page de garde) -->
+    <div id="hero">
+        <h1 class="romantic-font text-6xl md:text-8xl text-rose-600 mb-4">Mon dictionnaire</h1>
+        <h2 class="romantic-font text-4xl md:text-6xl text-rose-400 mb-12">pour Valentine</h2>
+        <button onclick="document.getElementById('hero').classList.add('hide')" class="btn-heart romantic-font">
+            Ouvrir mon cœur ❤️
+        </button>
+    </div>
+
+    <!-- Header & Search -->
+    <header class="bg-white pt-8 pb-4 px-4 shadow-sm">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="serif text-4xl text-rose-600 mb-6">Le Dictionnaire de Valentine</h1>
+            
+            <div class="relative max-w-md mx-auto mb-6">
+                <input type="text" id="searchInput" placeholder="Chercher un mot..." 
+                    class="w-full px-5 py-3 rounded-full border border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400 pl-12 shadow-sm">
+                <svg class="w-6 h-6 absolute left-4 top-3.5 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alphabet Nav -->
+    <nav class="alphabet-nav py-3 px-2 mb-8 shadow-sm">
+        <div id="alphabetContainer" class="max-w-6xl mx-auto flex flex-wrap justify-center gap-1 md:gap-2">
+            <!-- Dynamiquement rempli -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4">
+        <div id="dictionaryContent" class="space-y-12">
+            <!-- Sections injectées ici -->
+        </div>
+    </main>
+
+    <script>
+        const rawData = `
+abasourdir: provoquer une grande stupéfaction
+s’acoquiner: se lier avec quelqu’un pour faire des mauvais coups
+acquiescer: dire ou être d’accord 
+adjuger: attribuer quelque chose à quelqu'un
+admiratif: je suis rempli d’admiration envers toi
+adorable: qui est charmant 
+affabilité: caractère, manières aimable d’une personne 
+affective: la vie affective, les émotions, les sentiments éprouvés
+afflixion: très grand chagrin
+affranchit: être indépendante ex valentine est affranchit 
+altruisme: fait de s’intéresser aux autres, de leur vouloir du bien. faire preuve d’altruisme
+antidote: produit qui combat les effets du poison 
+s’assagir: devenir de plus en plus sage 
+assainir: rendre plus saint
+assidue: qui est régulière, constante et appliquée dans une occupation 
+aubaine: chance inattendue 
+avisée: qui agit avec habilitée et prudence, après avoir bien réfléchie 
+bassesse: action parole basses et méprisables
+bateleuse: personne qui amusait le public par des acrobatie, des tours sur la place et dans les foires 
+bavarde: qui aime parler et parle beaucoup 
+beauté: personne tres belle 
+bégayer: parler avec difficulté en répétent les syllabes et la difficulté à prononcer certain mots
+belle: jolie fille 
+se bichonner: se préparer avec soin et coquetterie 
+bien: ce qui est agréable, favorable
+bien aimé: que l’on aime tout particulièrement 
+bienfaisante: qui fait du bien 
+bilingue: qui parle deux langue 
+bonté: qualité d’un personne généreuse, gentille avec les autres 
+bouffon: homme qui était chargé autrefois de divertir le roi et sa cour 
+bravour: grand courage face au danger 
+brio: d’une manière brillante, remarquable 
+attirante: qui exerce un attrait, qui séduit par son charme ou sa beauté
+bronzée: qui brunit au soleil. ils sont rentré de vacance tout bronzés 
+cachottière: faire des mystère garder des choses secrètes
+calomnie: mensonge que l’on raconte sur quelqu’un pour atteindre à sa réputation
+candeur: innocence pureté 
+avoir du caractere: avoir de l’énergie de la volonté 
+carafe: bouteille élargie à sa base, dans laquelle on met de l’eau ou le vin pour les servirs ex valentine en a marre de chercher la carafe a la cantine 
+charité: générosité qui porte à faire de bien aux autres 
+circonspecte: qui envisage les choses avec réflexion et prudence 
+colosse: personne d’une taille hors du commun ex valentine est un colosse 
+compréhensive: qui comprends les actions des autres 
+conciliante: avec qui il est facile de trouver un compromis 
+confidente: personne à qui on se confie ex valentine est ma confidente 
+déconcerter: surprendre, troubler par une attitude inattendue la beauté de valentine est déconcertante
+découverte: action de trouver ce qui était inconnu ou caché découvrire valentine était le meilleure choix de ma vie 
+coquine: qui est malicieuse, qui aime bien taquiner les autres 
+déconcerter: surprendre par une attitude inattendue 
+démener: qui se donne beaucoup de mal ex valentine se donne beaucoup de mal pour fair plaisir a tout le monde
+désir: envie très forte de quelque chose ex valentine et amine désirent se revoir 
+déterminée: qui a prit une décision et s’y tient 
+dicton: courte phrase qui traduit une opinion générale devenue proverbiale 
+différente: qui n’est pas pareil ex Valentine est différente car c’est elle est authentique 
+discrète: qui ne se mêle pas de ce qui la regarde pas 
+distinctive: qui permet de la distinguer, de la reconnaître ex valentine est reconnaissable par sa personnalité 
+divine: excellente, parfaite valentine est la définition de la perfection 
+ebahi: qui est très étonné ex amine est ébahi quand il voit valentine
+éloquente: qui parle bien et a l’art de convaincre ceux qui l’écoute 
+engageante: qui est agréable, qui attire, séduit
+entreprenante: qui fait preuve d’audace et de décision, qui prend des initiatives 
+s’épanouir: manifester de la joie
+épauler: apporter son aide à quelqu'un ex valentine m’aider à réparer le mètre de ma mère…
+étourdissante: qui fait sensation, cause une stupéfaction admirative 
+éveillée: qui est plein de vie et de vivacité d’esprit 
+excellente: qui est particulièrement bien ou bon 
+fantastique: qui étonne par son caractère extraordinaire 
+forte: capable de résister au monde extérieur ou à soi-même
+franche: qui ne ment pas 
+frappante: qui provoque une forte impression
+fringante: personne élégante et pleine de vitalité 
+gagnante: qui gagne ou qui a l’esprit d’un gagnant 
+généreuse: qui donne beaucoup aux autres 
+havre de paix: refuge, lieu ou on se sent protégé et être avec toi est mon havre de paix 
+héroine: femme digne de gloire par son génie, sa force d’ame, son dévouement 
+humble: qui fait preuve de modestie, qui ne se vante pas 
+illuminer: éclairer d’une vive lumière ex valentine illumine ma journée d’une vive lumière
+immortelle: qui est toujours dans la mémoire 
+indépendante: qui ne dépend de personne, qui agit et décide librement 
+indulgente: qui pardonne facilement les fautes, les erreurs des autres 
+inestimable: dont la valeur est si grande que l’ont peut pas l'estimer 
+ingénieuse: qui fait preuve d’intelligence et d’imagination 
+idéale: quelqu’un qui te correspond parfaitement, sans avoir besoin de changer qui que ce soit 
+intelligente: qui comprend vite, qui comprends et s’adapte facilement 
+intentionnée: avoir de bonnes intentions 
+inventive: qui a le don d’inventer ex valentine invente des technique pour ne pas aller à l'école 
+investie: mettre toute son énergie dans une action, une activité 
+joufflue: qui a des joues mignonnes comme toi 
+joviale: qui est plein de gaieté simple et communicative 
+joyau: chose très belle ou d’une grande valeur 
+joyeuse: qui éprouve de la joie, qui manifeste de la joie
+judicieuse: qui donne une vision juste, intelligente de la situation 
+lis: grande fleur parfumée, blanche, rose, ou orangée
+magique: qui produit des effets extraordinaire ex passer un moment avec toi est magique 
+majestueuse: qui a de la majesté, de la grandeur 
+malicieuse: qui fait preuve de ruse, de finesse d’esprit 
+manquer: créer un vide, un manque par son absence ex quand je ne te parle pas pendant un jour tu me manque 
+marrante: qui amuse, fait rire
+meilleure: comparatif de supériorité valentine est la meilleure 
+mélancolique: qui a une vague de tristesse ex quand je t’es quitté à Caen j'étais mélancolique 
+méritante: qui a du mérite 
+méticuleuse: qui apporte beaucoup d’attention, de soin a ce qu’il fait 
+mignonne: agréable a voir, petite et gracieuse 
+minutieuse: qui fait preuve de minutie, qui attache beaucoup de soin aux détails 
+modeste: qui ne se vante pas, qui agit sans orgueil 
+noble: qui fait preuve de générosité, de grandeur morale 
+objective: qui raconte des faits tels qu’ils se sont réellement passées ex sans se laisser influencer
+odoriférant: qui répand une bonne odeur 
+palpitante: très intéressante ex toutes les histoires de valentines sont palpitantes 
+parfumée: qui dégage un parfum agréable 
+particulière: qui possède une nature propre, unique et précieuse
+passion: chose que l’on aime énormément ex passer un moment avec toi est ma passion
+patiente: qui sait attendre sans perdre patience, sans s’énerver 
+pédagogue: qui a le don d’enseigner, qui sait transmettre son savoir 
+penseuse: personne qui pense, réfléchit, médite
+perfection: qualité de ce qui est parfait 
+persistante: qui persiste, qui dure ex notre relation persistera jusqu'à la fin 
+personnalité: traits caractéristiques permanents d’une personne
+perspicace: qui comprends et voit ce qui échappe habituellement aux autres 
+persuasive: qui persuade, qui parvient à convaincre 
+pertinente: qui se rapporte précisément à ce dontil est question 
+phénoménale: qui sert de l’ordinaire, qui tient du phénomène
+photogénique: qui est aussi bien, sinon mieux en photo qu’au naturel 
+piédestal: avoir une très grande admiration pour lui 
+pointilleuse: qui est très exigeant sur le règlement  
+populaire: qui est connue et apprécié par de très nombreuse personne 
+positive: qui a un effet favorable 
+présente: qui est la 
+prestigieuse: qui a du prestige, qui suscite l’admiration 
+prévoyante: qui sait prévoir, qui pense à ce qui peut se passer
+priorité: droit de passer avant les autres 
+proche: qui a des relations étroites de parenté, d’amitié
+prodige: personne qui a des dons exceptionnels 
+progrès: amélioration changement de mieux en mieux 
+puissante: qui a une grande énergie, une grande intensité 
+qualité: ce qui fait la valeur de quelqu’un 
+rationnelle: qui est conforme à la raison, qu bon sens 
+ravie: très heureux, très content ex je suis plus que ravie a chaque fois que je te vois 
+ravir: plaire énormément à quelqu’un 
+ravissante: qui est très jolie 
+reconnaissant: qui témoigne de la reconnaissance, de la gratitude 
+réfléchie: qui pèse le pour et le contre avant d’agir ou de parler 
+remarquer: faire attention à quelque chose 
+rencontre: fait de rencontrer quelqu’un
+renommée: qui est très connue pour ses qualités 
+repartie: réponse vive et intelligente
+repentir: regretter d’avoir fait quelque chose, se le reprocher
+reposante: qui repose
+se résigner: accepter, supporter une chose pénible sans protester 
+résistante: qui résiste à l'effort, à la fatigue 
+résolue: qui sait prendre une décision et s’y tient 
+respectueuse: qui montre du respect pour 
+responsable: qui pèse les conséquences de ses actes 
+ressentir: éprouver une sensation, un sentiment 
+rester: continuer d'être ex Valentine est toujours restée elle même avec moi
+retenir: fixer dans sa mémoire 
+retentissante: qui retentit ex ta voix retentit toujours dans me tête même quand tu es absente 
+retenue: attitude d’une personne à être discrète modérée
+retranchement: endroit protégé où l’on peut se mettre à l’abri ex valentine est mon retranchement préférée
+richesse: caractère de ce qui est riche, précieux ex t’avoir dans ma vie est ma richesse 
+rieuse: qui aime rire, s’amuser 
+rigoureuse: qui est fait avec rigueur, exactitude, précision 
+robuste: forte, vigoureuse
+rusée: qui agit avec ruse 
+sagace: qui a une grande finesse d’esprit, qui comprend vite 
+sage: qui est plein de bon sens
+saine: qui est bon pour la santé 
+sainte: se dit d’une personne bonne, qui mène une vie exemplaire 
+satisfaite: qui est contente, qui manifeste de la satisfaction 
+savante: qui sait beaucoup de chose 
+scruter: examiner attentivement 
+sensationnelle: remarquable ex je passe toujours des moments sensationnelle avec toi
+sensée: qui a du bon sens 
+sensible: qui est facilement émue par ce qu’ elle voit ou ce qu’elle entend 
+senteur: odeur agréable ex valentine sens l’eau de rose
+sentimentale: qui se rapporte aux sentiments tendres, à l’amour 
+sereine: paisible, calme 
+sérieuse: qui attache de l'importance et porte beaucoup à ce qu’elle fait 
+serviable: qui aime rendre service aux autres 
+silencieuse: qui garde le silence qui ne parle pas 
+simple: qui ne fait pas de manière 
+soin: attention particulière que l’on met dans ce que l’on fait 
+solliciter: fait appel à quelqu’un ex je fais toujours appels à toi quand je me pose une question 
+somptueuse: luxueux et magnifique 
+souhaiter: désirer que quelque chose se produise 
+souriante: qui sourit souvent 
+soutenir: apporter une aide, un réconfort à quelqu'un ex je te soutiendrais toujours dans toutes tes décisions
+soutenue: qui ne se relâche pas 
+spéciale: qui n’est pas comme les autres
+spectaculaire: qui surprend, impressionne ex la prestance de valentine est spectaculaire 
+splendeur: ce qui est splendide, magnifique 
+sportive: qui pratique assidûment un ou plusieurs sport
+star: vedette ex tu es une star à mes yeux 
+studieuse: qui aime étudier, qui travaille avec application
+stylé: qui a du style, de l’allure 
+subjuguer: tenir sous le charme, séduire 
+substantielle: importante ex valentine est substantielle dans ma vie 
+subtile: fin et intelligente 
+supporteur: personne qui encourage ex je suis le premier supporter de tous tes projets 
+surexcité: Qui est dans un état de surexcitation ex je suis toujours excité à l'idée de te revoir 
+symbolique: qui n’a pas de valeur en soi mais qui est important pour ce qu’il représente ex ce que je t’ai écrit est symbolique 
+sympathie: attirance que l’on éprouve pour une personne 
+tacite: qui ne s’exprime pas avec des mots, qui est sous-entendu
+tapante: précis, exacte
+taquine: qui aime taquiner 
+tardif: qui a lieu tard, qui vient tard ex nous avons décidé de nous revoir tardivement 
+tâter le terrain: essayer de savoir ce qu’une personne pense 
+télépathie: transmission de pensée d’une personne à une autre ex je suis rentré dans ta tete
+téméraire: qui est d’une hardiesse excessive ex je suis téméraire à l'idée de te revoir 
+tenace: qui persévère dans ce qu’elle fait
+timide: qui manque d’assurance 
+titiller: embêter agréablement 
+tolérante: qui respect les opinions des autres 
+top model: pour moi tu es une mannequin de renommée 
+totalement: tout a fait, entièrement ex valentine a totalement raison 
+toujours: valentine a toujours raison 
+tournis: tu me donne le tournis
+tranquille: qui ne s’agite pas, qui est sage 
+transmettre: faire passer ex je te transmits ces mots pour mettre des mots sur ce que je pense 
+trépidante: plein d’agitation ex je suis trépidant à l’idée de te revoir
+trésor: tu es un trésors à mes yeux 
+trimer: travailler du ex valentine trime pour pouvoir être indépendante 
+triomphante: qui exprime la fierté, la joie du succès 
+qui vient des tripes: ex tous les mots que je t’ai écris viennent de mes tripes 
+trompeuse: ex tu agis de façon trompeuse quand on joue a poison treat sur roblox 
+trouble: état d’une personne troublé, émue 
+troubler: inquiéter, rendre perplexe te voir pleurer me trouble 
+tulipe: plante à bulbe dont la fleur a la forme d’une coupe 
+vaillante: qui a du courage, qui sait face au danger 
+valoir: avoir de l'estime pour quelqu'un 
+veiller: rester au chevet de quelqu’un 
+véracité: fait d'être vraie, authentique 
+vexant: qui vexe ex je suis désolé si des fois je te dis des choses vexante
+vie: entrain de vitalité 
+vigilante: qui fait preuve de vigilance, d’une surveillance soutenue
+vigoureuse: plein de santé, de force et d’énergie 
+vigueur: force physique, puissance, fermeté 
+vivace: qui dure, qui persiste
+vivante: qui est vif ou très animé 
+vivement: beaucoup, profondément ex j’ai vivement l’envie de te revoir 
+vocabulaire: ensemble de mots employés par une personne 
+voeu: envie très forte que quelque chose se réalise 
+voix: ce que l’on ressent au fond de soi 
+volonté: énergie, fermeté à réaliser ce que ló souhaite 
+vouloir: ex je veux te revoir 
+`;
+
+        const dictionary = [];
+        rawData.trim().split('\n').forEach(line => {
+            const parts = line.split(':');
+            if (parts.length >= 2) {
+                const word = parts[0].trim();
+                let rest = parts.slice(1).join(':').trim();
+                let definition = rest;
+                let example = "";
+
+                if (rest.includes("ex ")) {
+                    const exSplit = rest.split("ex ");
+                    definition = exSplit[0].trim();
+                    example = exSplit[1].trim();
+                }
+
+                dictionary.push({ word, definition, example });
+            }
+        });
+
+        const alphabet = [...new Set(dictionary.map(d => d.word[0].toUpperCase()))].sort();
+        const contentDiv = document.getElementById('dictionaryContent');
+        const alphabetContainer = document.getElementById('alphabetContainer');
+
+        function renderAlphabet() {
+            alphabetContainer.innerHTML = alphabet.map(letter => `
+                <a href="#letter-${letter}" class="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-rose-100 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors text-sm font-semibold">
+                    ${letter}
+                </a>
+            `).join('');
+        }
+
+        function renderDictionary(filter = "") {
+            contentDiv.innerHTML = "";
+            
+            alphabet.forEach(letter => {
+                const words = dictionary.filter(d => 
+                    d.word.toUpperCase().startsWith(letter) && 
+                    (d.word.toLowerCase().includes(filter.toLowerCase()) || d.definition.toLowerCase().includes(filter.toLowerCase()))
+                );
+
+                if (words.length > 0) {
+                    const section = document.createElement('section');
+                    section.id = `letter-${letter}`;
+                    section.innerHTML = `
+                        <div class="flex items-center gap-4 mb-6 pt-4">
+                            <h2 class="text-3xl font-bold text-rose-600 bg-white w-12 h-12 flex items-center justify-center rounded-xl shadow-sm border border-rose-100">${letter}</h2>
+                            <div class="h-px bg-rose-200 flex-grow"></div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            ${words.map(item => `
+                                <div class="word-card bg-white p-4 rounded-xl shadow-sm border border-rose-50 hover:border-rose-200">
+                                    <h3 class="font-bold text-rose-700 text-lg mb-2 capitalize">${item.word}</h3>
+                                    <p class="text-gray-600 text-sm leading-snug mb-3">${item.definition}</p>
+                                    ${item.example ? `<div class="example-box">❤️ "${item.example}"</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    contentDiv.appendChild(section);
+                }
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderDictionary(e.target.value);
+        });
+
+        renderAlphabet();
+        renderDictionary();
+    </script>
+</body>
+</html>
